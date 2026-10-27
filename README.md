@@ -33,3 +33,10 @@ Encoding is defined over UTF-8 bytes, per RFC 3986 §2.5. The `plus_as_space` op
 ## Edge cases
 
 Decoding accepts lowercase hex digits, although encoding always emits uppercase. Truncated sequences (`%`, `%2`) and non-hex digits (`%GG`) raise `DecodingError`; invalid UTF-8 byte sequences from otherwise well-formed `%XX` pairs also raise `DecodingError`. Non-`str` inputs raise `EncodingError` or `DecodingError` rather than `TypeError`, so callers can catch all codec failures with a single except clause.
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
